@@ -6,7 +6,7 @@ The website displays information on my hometown of Kobe, Japan. There are 4 data
 There are 9 php files under the following names:
 1. mainpage.php
 
-This file contains the html content for the website. It includes some php code for viewing the login inputs. It also uses php to show if a user is signed in or not through starting a session. 
+This file contains the html content for the website. It includes some php code for viewing the login inputs. It also uses php to show if a user is signed in or not through starting a session. It is the equivalent of the index file. 
 
 2. contactform.php
 
