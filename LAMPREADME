@@ -1,0 +1,93 @@
+The second coursework consisted of creating a website of our home town and hosting the website through the LAMP (Linux, Apache, MySQL, and PHP) server. Through the use of front-end programming languages like HTML, CSS, and Javascript, alongside back-end programming languages (PHP, MySQL) to connect with databases and the server, the project was possible to create. 
+•	Installation
+Firstly, The LAMP server needed to be installed. The LAMP server is run on a Linux operating system. Therefore a Linux perating system would be needed. In my case, I had installed Ubuntu 16.04 and used it through a virtual machine on the VMWare Software. Once the Linux operating system was available for use, the Apache, MySQL, and PHP components needed to be installed. This was all done through the terminal of the Ubuntu 16.04 operating system. 
+1.	Installing Apache
+The Apache web server is among the most popular web servers in the world. It's well-documented, and has been in wide use for much of the history of the web, which makes it a great default choice for hosting a website.
+In order to install the Apache server, the following commands needed to be typed in the terminal
+•	sudo apt-get update
+•	sudo apt-get install apache2
+Since we are using a sudo command, these operations get executed with root privileges. It will ask you for your regular user's password to verify your intentions.
+Once you've entered your password, apt will tell you which packages it plans to install and how much extra disk space they'll take up. Press Y and hit Enter to continue, and the installation will proceed.
+2.	Set Global ServerName to Suppress Syntax Warnings
+Next, we will add a single line to the /etc/apache2/apache2.conf file to suppress a warning message. While harmless, if you do not set ServerName globally, you will receive the following warning when checking your Apache configuration for syntax errors:
+•	sudo apache2ctl configtest
+Output
+•	AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 127.0.1.1. Set the 'ServerName' directive globally to suppress this message
+•	Syntax OK
+Open up the main configuration file with your text edit:
+•	sudo nano /etc/apache2/apache2.conf
+Inside, at the bottom of the file, add a ServerName directive, pointing to your primary domain name. If you do not have a domain name associated with your server, you can use your server's public IP address:
+/etc/apache2/apache2.conf
+. . .
+ServerName server_domain_or_IP
+Save and close the file when you are finished.
+Next, check for syntax errors by typing:
+•	sudo apache2ctl configtest
+Since we added the global ServerName directive, all you should see is:
+Output
+Syntax OK
+Restart Apache to implement your changes:
+•	sudo systemctl restart apache2
+You can do a spot check right away to verify that everything went as planned by visiting your server's public IP address in your web browser (see the note under the next heading to find out what your public IP address is if you do not have this information already):
+•	http://your_server_IP_address
+You will see the default Ubuntu 16.04 Apache web page, which is there for informational and testing purposes. It should look something like this:
+ 
+If you see this page, then your web server is now correctly installed. 
+3.	Install MySQL
+Now that we have our web server up and running, it is time to install MySQL. MySQL is a database management system. Basically, it will organize and provide access to databases where our site can store information.
+Again, we can use apt to acquire and install our software. This time, we'll also install some other "helper" packages that will assist us in getting our components to communicate with each other:
+•	sudo apt-get install mysql-server
+Again, you will be shown a list of the packages that will be installed, along with the amount of disk space they'll take up. Enter Y to continue.
+During the installation, your server will ask you to select and confirm a password for the MySQL "root" user. This is an administrative account in MySQL that has increased privileges. Think of it as being similar to the root account for the server itself (the one you are configuring now is a MySQL-specific account, however). In my case, I had set the password to “nishant”. 
+4.	Install PHP
+PHP is the component of our setup that will process code to display dynamic content. It can run scripts, connect to our MySQL databases to get information, and hand the processed content over to our web server to display.
+We can once again leverage the apt system to install our components. We're going to include some helper packages as well, so that PHP code can run under the Apache server and talk to our MySQL database:
+•	sudo apt-get install php libapache2-mod-php php-mcrypt php-mysql
+This should install PHP without any problems. We'll test this in a moment.
+In most cases, we'll want to modify the way that Apache serves files when a directory is requested. Currently, if a user requests a directory from the server, Apache will first look for a file called index.html. We want to tell our web server to prefer PHP files, so we'll make Apache look for an index.php file first.
+To do this, type this command to open the dir.conf file in a text editor with root privileges:
+•	sudo nano /etc/apache2/mods-enabled/dir.conf
+It will look like this:
+/etc/apache2/mods-enabled/dir.conf
+<IfModule mod_dir.c>
+    DirectoryIndex index.html index.cgi index.pl index.php index.xhtml index.htm
+</IfModule>
+We want to move the PHP index file highlighted above to the first position after the DirectoryIndex specification, like this:
+/etc/apache2/mods-enabled/dir.conf
+<IfModule mod_dir.c>
+    DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm
+</IfModule>
+When you are finished, save and close the file by pressing Ctrl-X. You'll have to confirm the save by typing Y and then hit Enter to confirm the file save location.
+After this, we need to restart the Apache web server in order for our changes to be recognized. You can do this by typing this:
+•	sudo systemctl restart apache2
+5.	Install PHP MyAdmin
+PHPMyAdmin was a tool used to organize and utilize our databases. Following are the  of PHP MyAdmin: 
+•	Communicates directly with your MySQL installation
+•	Handles authentication using MySQL credentials
+•	Executes and returns results for arbitrary SQL queries
+To get started, we can simply install phpMyAdmin from the default Ubuntu repositories.
+We can do this by updating our local package index and then using the apt packaging system to pull down the files and install them on our system:
+•	sudo apt-get update
+•	
+•	sudo apt-get install phpmyadmin php-mbstring php-gettext
+•	
+This will ask you a few questions in order to configure your installation correctly.
+Warning: When the first prompt appears, apache2 is highlighted, but not selected. If you do not hit Space to select Apache, the installer will not move the necessary files during installation. Hit Space, Tab, and then Enter to select Apache.
+•	For the server selection, choose apache2.
+•	Select yes when asked whether to use dbconfig-common to set up the database
+•	You will be prompted for your database administrator's password
+•	You will then be asked to choose and confirm a password for the phpMyAdmin application itself
+The installation process actually adds the phpMyAdmin Apache configuration file into the /etc/apache2/conf-enabled/ directory, where it is automatically read.
+The only thing we need to do is explicitly enable the PHP mcrypt and mbstring extensions, which we can do by typing:
+•	sudo phpenmod mcrypt
+•	sudo phpenmod mbstring
+Afterwards, you'll need to restart Apache for your changes to be recognized:
+•	sudo systemctl restart apache2
+You can now access the web interface by visiting your server's domain name or public IP address followed by /phpmyadmin:
+https://domain_name_or_IP/phpmyadmin
+ 
+You can now log into the interface using the root username and the administrative password you set up during the MySQL installation.
+When you log in, you'll see the user interface, which will look something like this:
+ 
+ The following tutorial was taken from www.digitalocean.com
+ 
