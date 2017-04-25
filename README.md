@@ -1,5 +1,5 @@
 # First-website-php
-This is a basic website that was hosted on my local server via xampp implementing MySQL database tables, php code, and front-end web development tools. 
+This is a basic website that was hosted on my local server via xampp implementing MySQL database tables, php code, and front-end web development tools. The website was also hosted on a local server on the Linux Ubuntu 16.04 Operating System under the LAMP server. The correct installation to install the LAMP server is under the LAMPREADME.md file . 
 
 The website displays information on my hometown of Kobe, Japan. There are 4 database tables, which includes a table for users, a table for comments, a table for flight details that gets emailed to the user, and a table used for the contact form.
 
